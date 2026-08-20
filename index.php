@@ -1,35 +1,41 @@
 <?php
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "crime_analysis";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+require_once "db.php";
 
 /* Total crimes */
 $total_query = $conn->query("SELECT COUNT(*) AS total FROM crime_records");
 $total = $total_query->fetch_assoc()["total"];
 
 /* High severity */
-$high_query = $conn->query("SELECT COUNT(*) AS total FROM crime_records WHERE severity = 'High'");
+$high_query = $conn->query(
+    "SELECT COUNT(*) AS total
+     FROM crime_records
+     WHERE severity = 'High'"
+);
 $high = $high_query->fetch_assoc()["total"];
 
 /* Medium severity */
-$medium_query = $conn->query("SELECT COUNT(*) AS total FROM crime_records WHERE severity = 'Medium'");
+$medium_query = $conn->query(
+    "SELECT COUNT(*) AS total
+     FROM crime_records
+     WHERE severity = 'Medium'"
+);
 $medium = $medium_query->fetch_assoc()["total"];
 
 /* Low severity */
-$low_query = $conn->query("SELECT COUNT(*) AS total FROM crime_records WHERE severity = 'Low'");
+$low_query = $conn->query(
+    "SELECT COUNT(*) AS total
+     FROM crime_records
+     WHERE severity = 'Low'"
+);
 $low = $low_query->fetch_assoc()["total"];
 
 /* Recent crimes */
 $recent_query = $conn->query(
-    "SELECT * FROM crime_records ORDER BY crime_date DESC LIMIT 5"
+    "SELECT *
+     FROM crime_records
+     ORDER BY crime_date DESC, id DESC
+     LIMIT 5"
 );
 
 ?>
@@ -181,14 +187,6 @@ nav a:hover {
     background-color: #1f618d;
 }
 
-.green {
-    background-color: #27ae60;
-}
-
-.green:hover {
-    background-color: #1e8449;
-}
-
 /* RECENT DATA */
 
 .data-box {
@@ -232,6 +230,35 @@ footer {
     text-align: center;
     padding: 20px;
     margin-top: 50px;
+}
+
+/* MOBILE */
+
+@media screen and (max-width: 768px) {
+
+    header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav {
+        text-align: center;
+    }
+
+    nav a {
+        display: inline-block;
+        margin: 5px 8px;
+    }
+
+    .container {
+        width: 95%;
+        margin: 30px auto;
+    }
+
+    .card {
+        width: 100%;
+    }
 }
 
 </style>
@@ -375,7 +402,7 @@ if ($recent_query && $recent_query->num_rows > 0) {
 
         echo "<tr>";
 
-        echo "<td>" . $row["id"] . "</td>";
+        echo "<td>" . (int) $row["id"] . "</td>";
 
         echo "<td>" .
              htmlspecialchars($row["crime_type"]) .
@@ -386,11 +413,11 @@ if ($recent_query && $recent_query->num_rows > 0) {
              "</td>";
 
         echo "<td>" .
-             $row["crime_date"] .
+             htmlspecialchars($row["crime_date"]) .
              "</td>";
 
         echo "<td class='" .
-             $severity_class .
+             htmlspecialchars($severity_class) .
              "'>" .
              htmlspecialchars($row["severity"]) .
              "</td>";
