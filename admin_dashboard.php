@@ -10,6 +10,8 @@ if (
     exit;
 }
 
+/* ONLINE DATABASE CONNECTION */
+
 require_once "db.php";
 
 /* GET ALL CRIME RECORDS */
@@ -46,6 +48,8 @@ body {
     color: #222;
 }
 
+/* HEADER */
+
 header {
     background-color: #17202a;
     color: white;
@@ -72,6 +76,8 @@ header h1 {
     background-color: #922b21;
 }
 
+/* MAIN CONTAINER */
+
 .container {
     width: 95%;
     margin: 40px auto;
@@ -90,6 +96,8 @@ header h1 {
 .welcome p {
     color: #666;
 }
+
+/* DASHBOARD CARDS */
 
 .cards {
     display: flex;
@@ -133,6 +141,8 @@ header h1 {
 .green:hover {
     background-color: #1e8449 !important;
 }
+
+/* RECORD MANAGEMENT */
 
 .management-box {
     background-color: white;
@@ -191,6 +201,8 @@ tr:hover {
     background-color: #f2f2f2;
 }
 
+/* SEVERITY COLOURS */
+
 .high {
     color: #c0392b;
     font-weight: bold;
@@ -205,6 +217,8 @@ tr:hover {
     color: #27ae60;
     font-weight: bold;
 }
+
+/* EDIT AND DELETE BUTTONS */
 
 .actions {
     white-space: nowrap;
@@ -243,6 +257,8 @@ tr:hover {
     color: #777;
 }
 
+/* FOOTER */
+
 footer {
     background-color: #17202a;
     color: white;
@@ -250,6 +266,8 @@ footer {
     padding: 20px;
     margin-top: 50px;
 }
+
+/* MOBILE VIEW */
 
 @media (max-width: 768px) {
 
@@ -286,205 +304,211 @@ footer {
 
 <header>
 
-<h1>Crime Analysis - Admin</h1>
+    <h1>Crime Analysis - Admin</h1>
 
-<a href="logout.php" class="logout">
-Logout
-</a>
+    <a href="logout.php" class="logout">
+        Logout
+    </a>
 
 </header>
 
 <div class="container">
 
-<div class="welcome">
+    <div class="welcome">
 
-<h2>Welcome, Admin</h2>
+        <h2>Welcome, Admin</h2>
 
-<p>
-Manage crime records and monitor the Crime Analysis system.
-</p>
+        <p>
+            Manage crime records and monitor the Crime Analysis system.
+        </p>
 
-</div>
+    </div>
 
-<div class="cards">
+    <div class="cards">
 
-<div class="card">
+        <div class="card">
 
-<h3>➕ Add Crime</h3>
+            <h3>➕ Add Crime</h3>
 
-<a href="add_crime.php" class="green">
-Add Crime Record
-</a>
+            <a href="add_crime.php" class="green">
+                Add Crime Record
+            </a>
 
-</div>
+        </div>
 
-<div class="card">
+        <div class="card">
 
-<h3>📋 Public Crime Data</h3>
+            <h3>📋 Public Crime Data</h3>
 
-<a href="crime_data.php">
-View Public Records
-</a>
+            <a href="crime_data.php">
+                View Public Records
+            </a>
 
-</div>
+        </div>
 
-<div class="card">
+        <div class="card">
 
-<h3>📊 Analysis</h3>
+            <h3>📊 Analysis</h3>
 
-<a href="analysis.php">
-View Crime Analysis
-</a>
+            <a href="analysis.php">
+                View Crime Analysis
+            </a>
 
-</div>
+        </div>
 
-<div class="card">
+        <div class="card">
 
-<h3>🛡️ Safety Awareness</h3>
+            <h3>🛡️ Safety Awareness</h3>
 
-<a href="safety.php">
-View Safety Tips
-</a>
+            <a href="safety.php">
+                View Safety Tips
+            </a>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
+    <!-- ADMIN CRIME MANAGEMENT TABLE -->
 
-<div class="management-box">
+    <div class="management-box">
 
-<div class="management-header">
+        <div class="management-header">
 
-<h2>Manage Crime Records</h2>
+            <h2>Manage Crime Records</h2>
 
-<a href="add_crime.php" class="add-button">
-+ Add Crime Record
-</a>
+            <a href="add_crime.php" class="add-button">
+                + Add Crime Record
+            </a>
 
-</div>
+        </div>
 
-<div class="table-container">
+        <div class="table-container">
 
-<table>
+            <table>
 
-<thead>
+                <thead>
 
-<tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Crime Type</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
 
-<th>ID</th>
-<th>Crime Type</th>
-<th>Location</th>
-<th>Date</th>
-<th>Severity</th>
-<th>Description</th>
-<th>Actions</th>
+                </thead>
 
-</tr>
+                <tbody>
 
-</thead>
+                <?php
 
-<tbody>
+                if ($result && $result->num_rows > 0) {
 
-<?php
+                    /*
+                    Display ID only.
+                    Always 1, 2, 3, 4...
+                    Actual database ID is used
+                    for Edit and Delete.
+                    */
 
-if ($result && $result->num_rows > 0) {
+                    $display_id = 1;
 
-    /*
-    Display numbering only.
-    Actual database ID is still used
-    for Edit and Delete.
-    */
+                    while ($row = $result->fetch_assoc()) {
 
-    $display_id = $result->num_rows;
+                        $real_id = (int) $row["id"];
 
-    while ($row = $result->fetch_assoc()) {
+                        $severity_class =
+                            strtolower($row["severity"]);
 
-        $real_id = (int) $row["id"];
+                        echo "<tr>";
 
-        $severity_class =
-            strtolower($row["severity"]);
+                        /* CONTINUOUS DISPLAY NUMBER */
 
-        echo "<tr>";
+                        echo "<td>" . $display_id . "</td>";
 
-        /* Clean display ID */
-        echo "<td>" . $display_id . "</td>";
+                        echo "<td>" .
+                             htmlspecialchars($row["crime_type"]) .
+                             "</td>";
 
-        echo "<td>" .
-             htmlspecialchars($row["crime_type"]) .
-             "</td>";
+                        echo "<td>" .
+                             htmlspecialchars($row["location"]) .
+                             "</td>";
 
-        echo "<td>" .
-             htmlspecialchars($row["location"]) .
-             "</td>";
+                        echo "<td>" .
+                             htmlspecialchars($row["crime_date"]) .
+                             "</td>";
 
-        echo "<td>" .
-             htmlspecialchars($row["crime_date"]) .
-             "</td>";
+                        echo "<td class='" .
+                             htmlspecialchars($severity_class) .
+                             "'>" .
+                             htmlspecialchars($row["severity"]) .
+                             "</td>";
 
-        echo "<td class='" .
-             htmlspecialchars($severity_class) .
-             "'>" .
-             htmlspecialchars($row["severity"]) .
-             "</td>";
+                        echo "<td>" .
+                             htmlspecialchars($row["description"]) .
+                             "</td>";
 
-        echo "<td>" .
-             htmlspecialchars($row["description"]) .
-             "</td>";
+                        echo "<td class='actions'>";
 
-        echo "<td class='actions'>";
+                        /*
+                        EDIT/DELETE still uses
+                        actual database ID.
+                        */
 
-        /* Uses real database ID */
+                        echo "<a href='edit_crime.php?id=" .
+                             $real_id .
+                             "' class='edit-button'>
+                             Edit
+                             </a>";
 
-        echo "<a href='edit_crime.php?id=" .
-             $real_id .
-             "' class='edit-button'>
-             Edit
-             </a>";
+                        echo "<a href='delete_crime.php?id=" .
+                             $real_id .
+                             "' class='delete-button'
+                             onclick=\"return confirm(
+                             'Are you sure you want to delete this record?'
+                             );\">
+                             Delete
+                             </a>";
 
-        echo "<a href='delete_crime.php?id=" .
-             $real_id .
-             "' class='delete-button'
-             onclick=\"return confirm(
-             'Are you sure you want to delete this record?'
-             );\">
-             Delete
-             </a>";
+                        echo "</td>";
 
-        echo "</td>";
+                        echo "</tr>";
 
-        echo "</tr>";
+                        /* NEXT DISPLAY NUMBER */
 
-        $display_id--;
-    }
+                        $display_id++;
+                    }
 
-} else {
+                } else {
 
-    echo "<tr>";
+                    echo "<tr>";
 
-    echo "<td colspan='7' class='no-data'>
-          No crime records found.
-          </td>";
+                    echo "<td colspan='7' class='no-data'>
+                          No crime records found.
+                          </td>";
 
-    echo "</tr>";
-}
+                    echo "</tr>";
+                }
 
-?>
+                ?>
 
-</tbody>
+                </tbody>
 
-</table>
+            </table>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </div>
 
 <footer>
 
-<p>
-© 2026 Crime Analysis for Community Safety Awareness
-</p>
+    <p>
+        © 2026 Crime Analysis for Community Safety Awareness
+    </p>
 
 </footer>
 
