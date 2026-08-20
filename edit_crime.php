@@ -2,30 +2,28 @@
 
 session_start();
 
-if (!isset($_SESSION["admin_logged_in"]) || $_SESSION["admin_logged_in"] !== true) {
+if (
+    !isset($_SESSION["admin_logged_in"]) ||
+    $_SESSION["admin_logged_in"] !== true
+) {
     header("Location: login.php");
     exit;
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "crime_analysis";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+require_once "db.php";
 
 $id = $_GET["id"] ?? 0;
 
 $sql = "SELECT * FROM crime_records WHERE id = ?";
+
 $stmt = $conn->prepare($sql);
+
 $stmt->bind_param("i", $id);
+
 $stmt->execute();
 
 $result = $stmt->get_result();
+
 $crime = $result->fetch_assoc();
 
 $stmt->close();
@@ -65,8 +63,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     );
 
     if ($update_stmt->execute()) {
-        header("Location: crime_data.php");
+
+        header("Location: admin_dashboard.php");
         exit;
+
+    } else {
+
+        $message = "Error updating crime record.";
+
     }
 
     $update_stmt->close();
@@ -80,6 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Edit Crime Record</title>
@@ -100,7 +105,9 @@ body {
 header {
     background-color: #17202a;
     color: white;
+
     padding: 20px 50px;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -116,9 +123,14 @@ nav a {
     margin-left: 25px;
 }
 
+nav a:hover {
+    color: #5dade2;
+}
+
 .container {
     width: 90%;
     max-width: 700px;
+
     margin: 50px auto;
 }
 
@@ -129,8 +141,11 @@ nav a {
 
 .form-box {
     background-color: white;
+
     padding: 35px;
+
     border-radius: 10px;
+
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
@@ -140,7 +155,9 @@ nav a {
 
 label {
     display: block;
+
     margin-bottom: 8px;
+
     font-weight: bold;
 }
 
@@ -148,24 +165,37 @@ input,
 select,
 textarea {
     width: 100%;
+
     padding: 12px;
+
     border: 1px solid #ccc;
+
     border-radius: 5px;
+
     font-size: 15px;
 }
 
 textarea {
     height: 120px;
+
+    resize: vertical;
 }
 
 button {
     width: 100%;
+
     padding: 13px;
+
     background-color: #2980b9;
+
     color: white;
+
     border: none;
+
     border-radius: 5px;
+
     font-size: 16px;
+
     cursor: pointer;
 }
 
@@ -175,17 +205,39 @@ button:hover {
 
 .cancel {
     display: block;
+
     text-align: center;
+
     margin-top: 15px;
+
     color: #555;
+
     text-decoration: none;
+}
+
+.message {
+    background-color: #fadbd8;
+
+    color: #922b21;
+
+    padding: 12px;
+
+    margin-bottom: 20px;
+
+    border-radius: 5px;
+
+    text-align: center;
 }
 
 footer {
     background-color: #17202a;
+
     color: white;
+
     text-align: center;
+
     padding: 20px;
+
     margin-top: 50px;
 }
 
@@ -202,8 +254,11 @@ footer {
 <nav>
 
 <a href="index.php">Home</a>
+
 <a href="crime_data.php">Crime Data</a>
+
 <a href="analysis.php">Analysis</a>
+
 <a href="safety.php">Safety Tips</a>
 
 </nav>
@@ -217,6 +272,17 @@ footer {
 
 <div class="form-box">
 
+<?php if ($message != "") { ?>
+
+<div class="message">
+
+<?php echo htmlspecialchars($message); ?>
+
+</div>
+
+<?php } ?>
+
+
 <form method="POST">
 
 <div class="form-group">
@@ -225,38 +291,52 @@ footer {
 
 <select name="crime_type" required>
 
-<option value="Theft"
-<?php if ($crime["crime_type"] == "Theft") echo "selected"; ?>>
+<option
+value="Theft"
+<?php if ($crime["crime_type"] == "Theft") echo "selected"; ?>
+>
 Theft
 </option>
 
-<option value="Robbery"
-<?php if ($crime["crime_type"] == "Robbery") echo "selected"; ?>>
+<option
+value="Robbery"
+<?php if ($crime["crime_type"] == "Robbery") echo "selected"; ?>
+>
 Robbery
 </option>
 
-<option value="Cyber Crime"
-<?php if ($crime["crime_type"] == "Cyber Crime") echo "selected"; ?>>
+<option
+value="Cyber Crime"
+<?php if ($crime["crime_type"] == "Cyber Crime") echo "selected"; ?>
+>
 Cyber Crime
 </option>
 
-<option value="Fraud"
-<?php if ($crime["crime_type"] == "Fraud") echo "selected"; ?>>
+<option
+value="Fraud"
+<?php if ($crime["crime_type"] == "Fraud") echo "selected"; ?>
+>
 Fraud
 </option>
 
-<option value="Vehicle Theft"
-<?php if ($crime["crime_type"] == "Vehicle Theft") echo "selected"; ?>>
+<option
+value="Vehicle Theft"
+<?php if ($crime["crime_type"] == "Vehicle Theft") echo "selected"; ?>
+>
 Vehicle Theft
 </option>
 
-<option value="Assault"
-<?php if ($crime["crime_type"] == "Assault") echo "selected"; ?>>
+<option
+value="Assault"
+<?php if ($crime["crime_type"] == "Assault") echo "selected"; ?>
+>
 Assault
 </option>
 
-<option value="Other"
-<?php if ($crime["crime_type"] == "Other") echo "selected"; ?>>
+<option
+value="Other"
+<?php if ($crime["crime_type"] == "Other") echo "selected"; ?>
+>
 Other
 </option>
 
@@ -286,7 +366,7 @@ required
 <input
 type="date"
 name="crime_date"
-value="<?php echo $crime["crime_date"]; ?>"
+value="<?php echo htmlspecialchars($crime["crime_date"]); ?>"
 required
 >
 
@@ -299,18 +379,24 @@ required
 
 <select name="severity" required>
 
-<option value="High"
-<?php if ($crime["severity"] == "High") echo "selected"; ?>>
+<option
+value="High"
+<?php if ($crime["severity"] == "High") echo "selected"; ?>
+>
 High
 </option>
 
-<option value="Medium"
-<?php if ($crime["severity"] == "Medium") echo "selected"; ?>>
+<option
+value="Medium"
+<?php if ($crime["severity"] == "Medium") echo "selected"; ?>
+>
 Medium
 </option>
 
-<option value="Low"
-<?php if ($crime["severity"] == "Low") echo "selected"; ?>>
+<option
+value="Low"
+<?php if ($crime["severity"] == "Low") echo "selected"; ?>
+>
 Low
 </option>
 
@@ -335,7 +421,7 @@ required
 Update Crime Record
 </button>
 
-<a href="crime_data.php" class="cancel">
+<a href="admin_dashboard.php" class="cancel">
 Cancel
 </a>
 
@@ -348,7 +434,9 @@ Cancel
 
 <footer>
 
-<p>© 2026 Crime Analysis for Community Safety Awareness</p>
+<p>
+© 2026 Crime Analysis for Community Safety Awareness
+</p>
 
 </footer>
 
