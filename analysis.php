@@ -1,17 +1,6 @@
 <?php
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "crime_analysis";
-
-/* Database Connection */
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+require_once "db.php";
 
 
 /* TOTAL CRIME CASES */
@@ -269,9 +258,7 @@ tr:hover {
 }
 
 
-/* ===================================== */
 /* VERTICAL CRIME TYPE GRAPH */
-/* ===================================== */
 
 .chart-scroll {
     width: 100%;
@@ -542,9 +529,7 @@ Live analysis based on crime records stored in the database
 </p>
 
 
-<!-- ===================================== -->
 <!-- SUMMARY -->
-<!-- ===================================== -->
 
 <div class="summary">
 
@@ -604,9 +589,7 @@ Live analysis based on crime records stored in the database
 </div>
 
 
-<!-- ===================================== -->
 <!-- LOCATION-WISE ANALYSIS -->
-<!-- ===================================== -->
 
 <div class="analysis-box">
 
@@ -673,9 +656,7 @@ No location data available.
 </div>
 
 
-<!-- ===================================== -->
 <!-- DATE-WISE ANALYSIS -->
-<!-- ===================================== -->
 
 <div class="analysis-box">
 
@@ -752,9 +733,7 @@ No date-wise data available.
 </div>
 
 
-<!-- ===================================== -->
 <!-- CRIME TYPE VERTICAL GRAPH -->
-<!-- ===================================== -->
 
 <div class="analysis-box">
 
@@ -780,14 +759,6 @@ Number of Cases
 
 
 <?php
-
-/*
-Calculate bar height.
-
-Maximum crime type receives approximately
-280px height and other bars are calculated
-relative to the maximum value.
-*/
 
 $bar_height =
     ($crime["total"] / $max_count) * 280;
@@ -860,9 +831,7 @@ Crime types are compared according to the number of recorded cases.
 </div>
 
 
-<!-- ===================================== -->
 <!-- SAFETY OBSERVATION -->
-<!-- ===================================== -->
 
 <div class="analysis-box">
 
